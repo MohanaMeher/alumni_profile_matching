@@ -1,7 +1,6 @@
 import pymongo
 
 
-
 class MongoDBCollection:
     def __init__(self,
                  username,
