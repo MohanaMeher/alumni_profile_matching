@@ -10,13 +10,25 @@ from user_definition import *
 from alumni_list import *
 from alumni_profiles import *
 
-def _download_alumni_list():
+'''def _download_alumni_list():
     storage_client = storage.Client.from_service_account_json(service_account_key_file)
-    upload_to_bucket(storage_client, bucket_name, main_file_remote_path, main_file_local_path)
+    upload_to_bucket(storage_client, bucket_name, main_file_remote_path, main_file_local_path)'''
     
-def _crawl_alumni_profiles():
-    pass
-    
+def _crawl_alumni_profiles(cohort_id, gcp_file_loc):
+    df= read_csv_from_gcs(bucket_name, gcp_file_loc, service_account_key_file)
+    profile_urls = df[df['Cohort'].map(lambda x:x.split(' ')[-1])==str(cohort_id)]['LinkedIn'].tolist()
+    people = []
+    url = "https://linkedin-profile-data.p.rapidapi.com/linkedin-data"
+    headers = {
+        "X-RapidAPI-Key": "e5631c58fbmsh8aa1d2740168739p1a2666jsn369e6d965356",
+        "X-RapidAPI-Host": "linkedin-profile-data.p.rapidapi.com"
+    }
+    for profile_url in profile_urls:
+        querystring = {"url":profile_url}
+        response = requests.request("GET", url, headers=headers, params=querystring)
+        people.append(response.json())
+    write_json_to_gcs(bucket_name, 'data/Cohort '+str(cohort_id)+'.json', service_account_key_file, people)
+
 
 with DAG(
     dag_id="msds697-task2",
