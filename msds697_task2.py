@@ -1,18 +1,18 @@
+import os
 import airflow
+import logging
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 
 from user_definition import *
-
 from alumni_list import *
 from alumni_profiles import *
-# NOTE : In order to make sure it send configurations requests first, do not import your .py reading from gs.
-
 
 def _download_alumni_list():
-    pass
+    storage_client = storage.Client.from_service_account_json(service_account_key_file)
+    upload_to_bucket(storage_client, bucket_name, main_file_remote_path, main_file_local_path)
     
 def _crawl_alumni_profiles():
     pass
@@ -26,7 +26,7 @@ with DAG(
 ) as dag:
 
     create_insert_aggregate = SparkSubmitOperator(
-        task_id="aggregate_creation",
+        task_id="aggregates_to_mongo",
         packages="com.google.cloud.bigdataoss:gcs-connector:hadoop2-1.9.17,org.mongodb.spark:mongo-spark-connector_2.12:3.0.1",
         exclude_packages="javax.jms:jms,com.sun.jdmk:jmxtools,com.sun.jmx:jmxri",
         conf={"spark.driver.userClassPathFirst":True,

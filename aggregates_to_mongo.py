@@ -41,7 +41,7 @@ def insert_aggregates_to_mongo():
     conf.set("fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
     conf.set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
 
-    law_enforcement_df = retreive_alumni_profiles_list(spark,
+    alumni_profiles_df = retreive_alumni_profiles_list(spark,
                                                        bucket_name)
 
     profile_data_path = f'##############################'
@@ -50,7 +50,7 @@ def insert_aggregates_to_mongo():
                                profile_data_path)
 
     json_field_name = "##############################"
-    aggregates = law_enforcement_df.rdd.map(
+    aggregates = alumni_profiles_df.rdd.map(
         lambda x: add_json_data_to_rdd(x, profile_json, json_field_name)
     ) 
 
