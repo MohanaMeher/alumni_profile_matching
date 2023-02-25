@@ -18,3 +18,12 @@ def write_json_to_gcs(bucket_name, blob_name, service_account_key_file, data):
 
     with blob.open("w") as f:
         json.dump(data, f)
+
+def read_file_from_gcs(storage_client ,bucket_name, blob_name):
+    """Write and read a blob from GCS using file-like IO"""
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(blob_name)
+
+    # read alumni list
+    with blob.open("r") as f:
+        return f

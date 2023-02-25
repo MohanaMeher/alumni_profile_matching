@@ -1,28 +1,28 @@
 # Original Data : https://data.sfgov.org/Public-Safety/Law-Enforcement-Dispatched-Calls-for-Service-Real-/gnap-fj3t
 import os
+import csv
+import json
 import logging
+import pandas as pd
+
 os.environ["no_proxy"]="*" # set this for airflow errors. https://github.com/apache/airflow/discussions/24463
 
 
-def write_json_to_gcs(bucket_name, blob_name, service_account_key_file, dct):
+def write_json_to_gcs(storage_client, bucket_name, blob_name, data):
     """Write and read a blob from GCS using file-like IO"""
-    storage_client = storage.Client.from_service_account_json(service_account_key_file)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
 
     with blob.open("w") as f:
-        json.dump(dct, f)
+        json.dump(data, f)
         
-def read_csv_from_gcs(bucket_name, blob_name, service_account_key_file):
+def read_csv_from_gcs(storage_client ,bucket_name, blob_name):
     """Write and read a blob from GCS using file-like IO"""
-    storage_client = storage.Client.from_service_account_json(service_account_key_file)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
-
-    # read alumnis list
+    
     with blob.open("r") as f:
-        df = pd.read_csv(f)
-    return df
+        return list(csv.DictReader(f, delimiter=','))
 
         
 
