@@ -10,9 +10,8 @@ def retreive_api_data(noaa_token, api_url):
     response = requests.get(api_url, headers=head)
     return response.json()
 
-def write_json_to_gcs(bucket_name, blob_name, service_account_key_file, data):
+def write_json_to_gcs(storage_client, bucket_name, blob_name, data):
     """Write and read a blob from GCS using file-like IO"""
-    storage_client = storage.Client.from_service_account_json(service_account_key_file)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(blob_name)
 

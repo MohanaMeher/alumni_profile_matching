@@ -1,10 +1,9 @@
 import os
-from datetime import date, datetime, timedelta
 
 bucket_name = os.environ.get("GS_BUCKET_NAME")
 service_account_key_file = os.environ.get("GS_SERVICE_ACCOUNT_KEY_FILE")
-ref_file_path = "refs/alumni_list.csv"
-profiles_folder_path = "profiles/"
+ref_file_path = os.environ.get("GS_REF_FILE_PATH")
+profiles_folder_path = "GS_PROFILES_FOLDER_PATH"
 
 mongo_username = os.environ.get("MONGO_USERNAME")
 mongo_password =  os.environ.get("MONGO_PASSWORD")
@@ -13,7 +12,7 @@ database_name = os.environ.get("MONGO_DB_NAME")
 collection_name = os.environ.get("MONGO_COLLECTION_NAME")
 
 linkedin_rapid_api = {
-    'key': "e5631c58fbmsh8aa1d2740168739p1a2666jsn369e6d965356",
-    'host': "linkedin-profile-data.p.rapidapi.com",
-    'url':"https://linkedin-profile-data.p.rapidapi.com/linkedin-data"
+    'key': os.environ.get("RAPID_API_KEY"),
+    'host': os.environ.get("RAPID_API_HOST"),
+    'url': os.environ.get("RAPID_API_URL")
 }

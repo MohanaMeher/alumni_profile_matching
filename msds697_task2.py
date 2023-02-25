@@ -25,16 +25,16 @@ def _crawl_alumni_profiles(**kwargs):
     profile_urls = kwargs['profile_urls']
     storage_client = storage.Client.from_service_account_json(service_account_key_file)
     people = []
-    url = linkedin_rapid_api.url
+    url = linkedin_rapid_api['url']
     headers = {
-        "X-RapidAPI-Key": linkedin_rapid_api.key,
-        "X-RapidAPI-Host": linkedin_rapid_api.host
+        "X-RapidAPI-Key": linkedin_rapid_api['key'],
+        "X-RapidAPI-Host": linkedin_rapid_api['host']
     }
     for profile_url in profile_urls:
         querystring = {"url":profile_url}
         response = requests.request("GET", url, headers=headers, params=querystring)
         people.append(response.json())
-    write_json_to_gcs(storage_client, bucket_name, 'data/Cohort_'+str(cohort_id)+'.json', people)
+    write_json_to_gcs(storage_client, bucket_name, f'{profiles_folder_path}Cohort_'+str(cohort_id)+'.json', people)
 
 
 with DAG(
