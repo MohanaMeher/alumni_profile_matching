@@ -13,16 +13,22 @@ from alumni_profiles import *
 def get_cohorts():
     storage_client = storage.Client.from_service_account_json(service_account_key_file)
     cohorts = dict()
-    for rec in read_csv_from_gcs(storage_client, bucket_name, ref_file_path):
-        cohort_id = int(rec['Cohort'].split()[-1])
-        if cohort_id not in cohorts:
-            cohorts[cohort_id] = []
-        cohorts[cohort_id].append(rec['LinkedIn'])
+    try:
+        for rec in read_csv_from_gcs(storage_client, bucket_name, ref_file_path):
+            cohort_id = int(rec['Cohort'].split()[-1])
+            if cohort_id not in cohorts:
+                cohorts[cohort_id] = []
+            cohorts[cohort_id].append(rec['LinkedIn'])
+    except:
+        logging.error('Couldn\'t get Alumni LinkedIn URLs')
     return cohorts
 
 def _crawl_alumni_profiles(**kwargs):
-    cohort_id = kwargs['cohort_id']
-    profile_urls = kwargs['profile_urls']
+    try:
+        cohort_id = kwargs['cohort_id']
+        profile_urls = kwargs['profile_urls']
+    except:
+        logging.error('cohort_id or profile_urls not found in kwargs')
     storage_client = storage.Client.from_service_account_json(service_account_key_file)
     people = []
     url = linkedin_rapid_api['url']
@@ -31,9 +37,12 @@ def _crawl_alumni_profiles(**kwargs):
         "X-RapidAPI-Host": linkedin_rapid_api['host']
     }
     for profile_url in profile_urls:
-        querystring = {"url":profile_url}
-        response = requests.request("GET", url, headers=headers, params=querystring)
-        people.append(response.json())
+        try:
+            querystring = {"url":profile_url}
+            response = requests.request("GET", url, headers=headers, params=querystring)
+            people.append(response.json())
+        except:
+            logging.warning(f'Profile {profile_url} not found. Skipping.')
     write_json_to_gcs(storage_client, bucket_name, f'{profiles_folder_path}Cohort_'+str(cohort_id)+'.json', people)
 
 
