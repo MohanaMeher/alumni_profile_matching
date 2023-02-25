@@ -3,7 +3,6 @@ import airflow
 import logging
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
-from airflow.operators.bash import BashOperator
 from airflow.operators.python import PythonOperator
 from google.cloud import storage
 
@@ -14,7 +13,7 @@ from alumni_profiles import *
 def get_cohorts():
     storage_client = storage.Client.from_service_account_json(service_account_key_file)
     cohorts = dict()
-    for rec in read_csv_from_gcs(storage_client, bucket_name, main_file_remote_path):
+    for rec in read_csv_from_gcs(storage_client, bucket_name, ref_file_path):
         cohort_id = int(rec['Cohort'].split()[-1])
         if cohort_id not in cohorts:
             cohorts[cohort_id] = []
@@ -59,7 +58,7 @@ with DAG(
                 },
             verbose=True,
             application='aggregates_to_mongo.py',
-
+            application_args=[f'{profiles_folder_path}Cohort_'+str(cohort)+'.json']
         )
 
         crawl_alumni_profiles = PythonOperator(task_id = f"crawl_alumni_profiles_cohort_{cohort}",
