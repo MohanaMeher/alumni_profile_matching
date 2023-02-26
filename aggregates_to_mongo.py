@@ -26,7 +26,6 @@ def insert_aggregates_to_mongo(profiles_path_by_cohort):
                                 database_name,
                                 collection_name)
     for aggregate in aggregates.collect():
-        print(aggregate)
         mongodb.insert_one(aggregate)
 
 if __name__=="__main__":
@@ -34,4 +33,4 @@ if __name__=="__main__":
     try:
         insert_aggregates_to_mongo(profiles_path_by_cohort)
     except:
-            logging.error(f'Error inserting aggregate record to mongodb')
+        logging.error(f'Error inserting aggregate record to mongodb')

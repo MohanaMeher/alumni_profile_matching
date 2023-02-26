@@ -1,6 +1,7 @@
 import os
 import airflow
 import logging
+from datetime import datetime
 from airflow import DAG
 from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.operators.python import PythonOperator
@@ -67,6 +68,7 @@ with DAG(
                 },
             verbose=True,
             application='/Users/mohanameher/airflow/dags/aggregates_to_mongo.py',
+            # Pass args to Spark job
             application_args=[f'{profiles_folder_path}Cohort_'+str(cohort)+'.json']
         )
 
