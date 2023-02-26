@@ -66,15 +66,15 @@ with DAG(
                 #  "google.cloud.auth.service.account.json.keyfile":service_account_key_file,
                 },
             verbose=True,
-            application='aggregates_to_mongo.py',
+            application='/Users/mohanameher/airflow/dags/aggregates_to_mongo.py',
             application_args=[f'{profiles_folder_path}Cohort_'+str(cohort)+'.json']
         )
 
-        crawl_alumni_profiles = PythonOperator(task_id = f"crawl_alumni_profiles_cohort_{cohort}",
-                                                        provide_context=True,
-                                                        python_callable=_crawl_alumni_profiles,
-                                                        op_kwargs={'cohort_id': cohort , 'profile_urls': profiles},
-                                                        dag=dag)
+        # crawl_alumni_profiles = PythonOperator(task_id = f"crawl_alumni_profiles_cohort_{cohort}",
+        #                                                 provide_context=True,
+        #                                                 python_callable=_crawl_alumni_profiles,
+        #                                                 op_kwargs={'cohort_id': cohort , 'profile_urls': profiles},
+        #                                                 dag=dag)
         
-        crawl_alumni_profiles >> create_insert_aggregate
+        create_insert_aggregate
 

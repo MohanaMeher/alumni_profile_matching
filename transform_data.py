@@ -1,5 +1,6 @@
 import json
 import pandas as pd
+import sys
 import pyspark
 from google.cloud import storage
 from mongodb import *
@@ -9,28 +10,11 @@ from user_definition import *
 from alumni_profiles import *
 
 
+def return_profile_data_json(spark, x, profiles_path_by_cohort,json_field_name):
 
-
-def return_profile_data_json(x,profile_data_path,json_field_name):
-
-    conf = pyspark.SparkConf().set("spark.jars", '/Users/renukavallimarepalli/Documents/MyDocuments/USF/Spring 1/Distributed Data Systems/Final Project/alumni_profile_matching/gcs-connector-hadoop2-latest.jar')
-    sc = pyspark.SparkContext(conf=conf).getOrCreate()
-    conf = sc.sparkContext._jsc.hadoopConfiguration()
-    conf.set("google.cloud.auth.service.account.json.keyfile", service_account_key_file)
-    conf.set("fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-    conf.set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-
-    alumni_data= (
-    sc.read.format("json")
-    .load(f"gs://{bucket_name}/{profile_data_path}")
-    # .load(f"gs://{bucket_name}/profiles/Cohort_9.json")
-    )
-    # alumni_list.show()
-
-    spark = SparkSession.builder.getOrCreate()
-
-    #Get profile identifier from url # For testing only
-    x = "https://www.linkedin.com/in/justin-battles-75929554/"
+    alumni_data = spark.read.format("json")\
+        .option("header", False)\
+        .load(f"gs://{bucket_name}/{profiles_path_by_cohort}")
     y = x.split("/") #replace x by x[3]
     profile_id  = y[-2]
     #for testing only

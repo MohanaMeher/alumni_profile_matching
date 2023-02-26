@@ -3,7 +3,7 @@ import os
 bucket_name = os.environ.get("GS_BUCKET_NAME")
 service_account_key_file = os.environ.get("GS_SERVICE_ACCOUNT_KEY_FILE")
 ref_file_path = os.environ.get("GS_REF_FILE_PATH")
-profiles_folder_path = "GS_PROFILES_FOLDER_PATH"
+profiles_folder_path = os.environ.get("GS_PROFILES_FOLDER_PATH")
 
 mongo_username = os.environ.get("MONGO_USERNAME")
 mongo_password =  os.environ.get("MONGO_PASSWORD")
