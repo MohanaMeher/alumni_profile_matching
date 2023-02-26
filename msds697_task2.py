@@ -53,6 +53,12 @@ with DAG(
     start_date=datetime(2023, 1, 1),
     catchup=False
 ) as dag:
+    
+    '''
+    Below loop would dynamically generate task workflows for each cohort.
+    We read the main file(source_file#1) in get_cohorts() function.
+    Each flow consists of two tasks: one for extract and other for tranform&load
+    '''
     for cohort, profiles in get_cohorts().items():
 
         create_insert_aggregate = SparkSubmitOperator(
