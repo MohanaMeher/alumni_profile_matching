@@ -10,5 +10,33 @@ Data sources :
 
 
 
+In phase 1, we setup a DAG airflow pipeline to extract data from the aforementioned data sources, perform transformations on spark and load into
+mongo db.
+Listed below are the modules in which the ETL setup using DAG has been implemented.
+
+
+**DAG pipeline
+
+msds697_task2.py
+
+The DAG is setup in a way that it dynamically generates task workflows for each cohort.
+We read the main file(source_file#1) in get_cohorts() function.
+Each flow consists of two tasks: one for extract and other for tranform&load
+
+
+
+**Extract :**
+
+alumni_list.py
+alumni_profiles.py
+
+**Transform & Load**
+aggregates_to_mongo.py
+
+**Load**
+mongodb.py
+
+**User definition**
+user_definition.py
 
 
