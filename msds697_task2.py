@@ -73,7 +73,7 @@ with DAG(
                 #  "google.cloud.auth.service.account.json.keyfile":service_account_key_file,
                 },
             verbose=True,
-            application='/Users/mohanameher/airflow/dags/aggregates_to_mongo.py',
+            application=spark_application,
             # Pass args to Spark job
             application_args=[f'{profiles_folder_path}Cohort_'+str(cohort)+'.json']
         )

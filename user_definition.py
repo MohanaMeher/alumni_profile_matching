@@ -16,3 +16,5 @@ linkedin_rapid_api = {
     'host': os.environ.get("RAPID_API_HOST"),
     'url': os.environ.get("RAPID_API_URL")
 }
+
+spark_application = os.environ.get("SPARK_APPLICATION")
