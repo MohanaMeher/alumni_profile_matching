@@ -15,7 +15,7 @@ mongo db.
 Listed below are the modules in which the ETL setup using DAG has been implemented.
 
 
-**DAG pipeline
+**DAG pipeline**
 
 msds697_task2.py
 
@@ -31,12 +31,15 @@ alumni_list.py
 alumni_profiles.py
 
 **Transform & Load**
+
 aggregates_to_mongo.py
 
 **Load**
+
 mongodb.py
 
 **User definition**
+
 user_definition.py
 
 
