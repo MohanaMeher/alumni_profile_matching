@@ -70,11 +70,11 @@ with DAG(
             application_args=[f'{profiles_folder_path}Cohort_'+str(cohort)+'.json']
         )
 
-        # crawl_alumni_profiles = PythonOperator(task_id = f"crawl_alumni_profiles_cohort_{cohort}",
-        #                                                 provide_context=True,
-        #                                                 python_callable=_crawl_alumni_profiles,
-        #                                                 op_kwargs={'cohort_id': cohort , 'profile_urls': profiles},
-        #                                                 dag=dag)
+        crawl_alumni_profiles = PythonOperator(task_id = f"crawl_alumni_profiles_cohort_{cohort}",
+                                                        provide_context=True,
+                                                        python_callable=_crawl_alumni_profiles,
+                                                        op_kwargs={'cohort_id': cohort , 'profile_urls': profiles},
+                                                        dag=dag)
         
-        create_insert_aggregate
+        crawl_alumni_profiles >> create_insert_aggregate
 
