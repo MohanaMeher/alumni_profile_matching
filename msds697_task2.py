@@ -49,8 +49,9 @@ def _crawl_alumni_profiles(**kwargs):
             logging.info(f'Scraping profile - {profile_url}')
             try:
                 querystring = {"url":profile_url}
-                response = requests.request("GET", url, headers=headers, params=querystring)
-                people.append(response.json())
+                response = requests.request("GET", url, headers=headers, params=querystring).json()
+                if type(response) is dict:
+                    people.append(response)
             except:
                 logging.warning(f'Profile {profile_url} not found. Skipping.')
                 invalid_urls.append(profile_url)

@@ -78,3 +78,9 @@ class MongoDBCollection:
         Both filter and update are dictionaries.
         '''
         self.collection.update_many(filter, update)
+    
+    def delete_many(self, filter):
+        '''
+        Remove documents satisfying filter with delete.
+        '''
+        self.collection.delete_many(filter)
