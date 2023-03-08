@@ -31,20 +31,35 @@ def _crawl_alumni_profiles(**kwargs):
     except:
         logging.error('cohort_id or profile_urls not found in kwargs')
     storage_client = storage.Client.from_service_account_json(service_account_key_file)
-    people = []
-    url = linkedin_rapid_api['url']
-    headers = {
-        "X-RapidAPI-Key": linkedin_rapid_api['key'],
-        "X-RapidAPI-Host": linkedin_rapid_api['host']
-    }
-    for profile_url in profile_urls:
-        try:
-            querystring = {"url":profile_url}
-            response = requests.request("GET", url, headers=headers, params=querystring)
-            people.append(response.json())
-        except:
-            logging.warning(f'Profile {profile_url} not found. Skipping.')
-    write_json_to_gcs(storage_client, bucket_name, f'{profiles_folder_path}Cohort_'+str(cohort_id)+'.json', people)
+    stats = file_exists_on_gcs(storage_client, bucket_name, f'{profiles_folder_path}Cohort_'+str(cohort_id)+'.json')
+    
+    if stats:
+        logging.info('File already exists on storage bucket')
+    else:
+        people = []
+        url = linkedin_rapid_api['url']
+
+        headers = {
+            "X-RapidAPI-Key": linkedin_rapid_api['key'],
+            "X-RapidAPI-Host": linkedin_rapid_api['host']
+        }
+        logging.info(f'Attempting to scrape: ## {len(profile_urls)} profiles')
+        invalid_urls = []
+        for profile_url in profile_urls:
+            logging.info(f'Scraping profile - {profile_url}')
+            try:
+                querystring = {"url":profile_url}
+                response = requests.request("GET", url, headers=headers, params=querystring)
+                people.append(response.json())
+            except:
+                logging.warning(f'Profile {profile_url} not found. Skipping.')
+                invalid_urls.append(profile_url)
+                continue
+        logging.info(f'Total profiles scraped: ### {len(people)}')
+        logging.info(f'Total Invalid profiles: ### {len(invalid_urls)}')
+        write_json_to_gcs(storage_client, bucket_name, f'{profiles_folder_path}Cohort_'+str(cohort_id)+'.json', people)
+        write_csv_to_gcs(storage_client, bucket_name, f'invalid_profiles/Cohort_'+str(cohort_id)+'.csv', invalid_urls)
+        
 
 
 with DAG(
